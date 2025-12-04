@@ -10,7 +10,7 @@
 	</p>
 
 	<p>
-		There are <strong>106 risk features</strong> across the four domains, each mapped to established clinical frameworks.
+		There are <strong>101 risk features</strong> across the four domains, each mapped to established clinical frameworks.
 	</p>
 
 	<div class="not-prose bg-blue-50 border border-blue-200 rounded-lg p-4 my-6">
@@ -21,7 +21,7 @@
 
 	<hr class="my-12" />
 
-	<h2 id="self">Self Domain Features (42)</h2>
+	<h2 id="self">Self Domain Features (36)</h2>
 
 	<p>
 		Based on <strong>C-SSRS</strong> (Columbia Suicide Severity Rating Scale), <strong>Joiner's Interpersonal Theory</strong>, and <strong>IAR_DST</strong> for self-neglect.
@@ -176,6 +176,21 @@
 				<td>May resolve but requires acute management.</td>
 			</tr>
 			<tr>
+				<td><code>visual_hallucinations</code></td>
+				<td>Visual hallucinations suggesting organic cause</td>
+				<td>May indicate delirium, substance effects, or neurological issues.</td>
+			</tr>
+			<tr>
+				<td><code>disorientation</code></td>
+				<td>Not oriented to time, place, or person</td>
+				<td>Suggests organic cause (delirium, dementia). Requires medical evaluation.</td>
+			</tr>
+			<tr>
+				<td><code>medical_exclusion_required</code></td>
+				<td>Signs of organic cause (delirium, metabolic issues)</td>
+				<td>Medical evaluation needed before psychiatric treatment.</td>
+			</tr>
+			<tr>
 				<td><code>ai_collusion_risk</code></td>
 				<td>Risk of AI reinforcing delusional beliefs</td>
 				<td>Unique to AI contexts. Requires careful response framing.</td>
@@ -238,12 +253,22 @@
 				<td>Severe hoarding affecting safety</td>
 				<td>Fire risk, falls, barriers to emergency access.</td>
 			</tr>
+			<tr>
+				<td><code>severe_functional_impairment</code></td>
+				<td>Cannot perform basic self-care tasks</td>
+				<td>ADL (Activities of Daily Living) impairment. May require care support.</td>
+			</tr>
+			<tr>
+				<td><code>self_isolation_neglect</code></td>
+				<td>Withdrawn from all support in neglect context</td>
+				<td>Combined isolation + neglect increases risk significantly.</td>
+			</tr>
 		</tbody>
 	</table>
 
 	<hr class="my-12" />
 
-	<h2 id="others">Others Domain Features (16)</h2>
+	<h2 id="others">Others Domain Features (19)</h2>
 
 	<p>
 		Based on <strong>HCR-20 V3</strong> (Historical-Clinical-Risk Management) and <strong>FBI BTAC</strong> (Behavioral Threat Assessment Center).
@@ -324,6 +349,16 @@
 				<td>Perceived injustice seeking redress</td>
 				<td>Targeted violence often follows grievance pathway.</td>
 			</tr>
+			<tr>
+				<td><code>psychosis_present</code></td>
+				<td>Delusions or hallucinations present</td>
+				<td>May drive paranoid or command-driven violence. Requires psychiatric assessment.</td>
+			</tr>
+			<tr>
+				<td><code>paranoid_delusions</code></td>
+				<td>Persecutory beliefs targeting specific people or groups</td>
+				<td>Can escalate to defensive or preemptive violence against perceived threats.</td>
+			</tr>
 		</tbody>
 	</table>
 
@@ -368,7 +403,7 @@
 
 	<hr class="my-12" />
 
-	<h2 id="dependent">Dependent at Risk Features (20)</h2>
+	<h2 id="dependent">Dependent at Risk Features (18)</h2>
 
 	<p>
 		Based on <strong>WHO Child Protection Guidelines</strong>, <strong>UK MASH framework</strong>, and safeguarding best practices.
@@ -424,6 +459,26 @@
 				<td><code>parental_incapacity</code></td>
 				<td>Parent unable to care (mental health, substance use)</td>
 				<td>May require alternative care arrangements.</td>
+			</tr>
+			<tr>
+				<td><code>unsafe_environment</code></td>
+				<td>Hazardous living conditions for dependent</td>
+				<td>Includes environmental hazards, lack of supervision, dangerous situations.</td>
+			</tr>
+			<tr>
+				<td><code>medical_neglect</code></td>
+				<td>Untreated medical conditions or medication non-compliance for dependent</td>
+				<td>Failure to provide necessary medical care for child's health condition.</td>
+			</tr>
+			<tr>
+				<td><code>educational_neglect</code></td>
+				<td>Child not attending school without valid reason</td>
+				<td>May indicate broader neglect or safeguarding concerns.</td>
+			</tr>
+			<tr>
+				<td><code>abandonment</code></td>
+				<td>Child left alone inappropriately or deserted</td>
+				<td>Immediate safeguarding response required.</td>
 			</tr>
 		</tbody>
 	</table>
@@ -544,6 +599,16 @@
 				<td><code>victim_fear_level</code></td>
 				<td>Victim expresses fear for their life</td>
 				<td>Victim perception is strong predictor. Trust their assessment.</td>
+			</tr>
+			<tr>
+				<td><code>threats_to_children</code></td>
+				<td>Threats involving victim's children</td>
+				<td>Coercive tactic to control victim. Child protective services notification may be needed.</td>
+			</tr>
+			<tr>
+				<td><code>threats_to_pets</code></td>
+				<td>Threats or violence toward pets</td>
+				<td>Psychological control tactic. Pet abuse predicts lethality escalation.</td>
 			</tr>
 		</tbody>
 	</table>
@@ -680,6 +745,11 @@
 				<td><code>movement_restriction</code></td>
 				<td>Not allowed to leave or contact others</td>
 				<td>Physical or psychological confinement.</td>
+			</tr>
+			<tr>
+				<td><code>recruitment_for_exploitation</code></td>
+				<td>Being recruited or grooming others into exploitation</td>
+				<td>May indicate victim becoming perpetrator under coercion. Secondary victimization.</td>
 			</tr>
 		</tbody>
 	</table>
