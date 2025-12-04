@@ -150,7 +150,7 @@ X-RateLimit-Reset: 1700000000</code></pre>
 	<h3>Handling 429 Responses</h3>
 
 	<pre><code>async function evaluateWithRetry(messages, maxRetries = 3) &#123;
-  for (let attempt = 0; attempt < maxRetries; attempt++) &#123;
+  for (let attempt = 0; attempt &lt; maxRetries; attempt++) &#123;
     const response = await fetch('https://api.nope.net/v1/evaluate', &#123;
       method: 'POST',
       headers: &#123; 'Authorization': `Bearer $&#123;apiKey&#125;` &#125;,
@@ -161,7 +161,7 @@ X-RateLimit-Reset: 1700000000</code></pre>
       const resetTime = parseInt(response.headers.get('X-RateLimit-Reset'));
       const waitMs = Math.max(0, resetTime * 1000 - Date.now()) + 1000;
       console.log(`Rate limited. Waiting $&#123;waitMs&#125;ms...`);
-      await new Promise(resolve => setTimeout(resolve, waitMs));
+      await new Promise(resolve =&gt; setTimeout(resolve, waitMs));
       continue;
     &#125;
 
@@ -311,22 +311,22 @@ function getDefaultCrisisResources() &#123;
 	<pre><code>async function fetchWithRetry(url, options, maxRetries = 3) &#123;
   const delays = [1000, 2000, 4000]; // ms
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) &#123;
+  for (let attempt = 0; attempt &lt; maxRetries; attempt++) &#123;
     try &#123;
       const response = await fetch(url, options);
 
       // Don't retry client errors (except rate limits)
-      if (response.status >= 400 && response.status < 500 && response.status !== 429) &#123;
+      if (response.status &gt;= 400 &amp;&amp; response.status &lt; 500 &amp;&amp; response.status !== 429) &#123;
         return response;
       &#125;
 
       // Retry server errors and rate limits
-      if (response.status === 429 || response.status >= 500) &#123;
-        if (attempt < maxRetries - 1) &#123;
+      if (response.status === 429 || response.status &gt;= 500) &#123;
+        if (attempt &lt; maxRetries - 1) &#123;
           const delay = response.status === 429
             ? Math.max(delays[attempt], getRetryAfter(response))
             : delays[attempt];
-          await new Promise(r => setTimeout(r, delay));
+          await new Promise(r =&gt; setTimeout(r, delay));
           continue;
         &#125;
       &#125;
@@ -334,8 +334,8 @@ function getDefaultCrisisResources() &#123;
       return response;
     &#125; catch (error) &#123;
       // Network errors - retry
-      if (attempt < maxRetries - 1) &#123;
-        await new Promise(r => setTimeout(r, delays[attempt]));
+      if (attempt &lt; maxRetries - 1) &#123;
+        await new Promise(r =&gt; setTimeout(r, delays[attempt]));
         continue;
       &#125;
       throw error;

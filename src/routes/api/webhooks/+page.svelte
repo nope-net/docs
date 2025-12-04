@@ -288,7 +288,7 @@ app.post('/webhooks/nope', express.raw(&#123; type: 'application/json' &#125;), 
     notifySafetyTeam(event);
   &#125;
 
-  // Respond quickly (< 30s)
+  // Respond quickly (&lt; 30s)
   res.status(200).send('OK');
 &#125;);</code></pre>
 
