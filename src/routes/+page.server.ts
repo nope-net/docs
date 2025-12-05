@@ -1,5 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { marked } from 'marked';
+import { codeToHtml } from 'shiki';
 
 export async function load() {
   // Read the generated markdown
@@ -21,5 +23,37 @@ export async function load() {
     toc.push({ id, title, level });
   }
 
-  return { markdown, toc };
+  // Configure marked with syntax highlighting
+  const renderer = new marked.Renderer();
+
+  renderer.heading = ({ text, depth }) => {
+    const id = text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    return `<h${depth} id="${id}">${text}</h${depth}>`;
+  };
+
+  renderer.code = async ({ text, lang }) => {
+    if (lang && lang !== 'text') {
+      try {
+        const highlighted = await codeToHtml(text, {
+          lang,
+          theme: 'github-light'
+        });
+        return highlighted;
+      } catch (e) {
+        // Fallback to plain code block if language not supported
+        return `<pre><code class="language-${lang}">${text}</code></pre>`;
+      }
+    }
+    return `<pre><code>${text}</code></pre>`;
+  };
+
+  marked.setOptions({ renderer });
+
+  // Render markdown with syntax highlighting
+  const html = await marked(markdown);
+
+  return { html, toc };
 }
