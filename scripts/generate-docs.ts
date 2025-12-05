@@ -361,7 +361,7 @@ Get your API key at [dashboard.nope.net](https://dashboard.nope.net).
 
 ## Authentication
 
-Most endpoints require a Bearer token:
+All endpoints require a Bearer token:
 
 \`\`\`
 Authorization: Bearer nope_live_xxxxxx
@@ -370,26 +370,6 @@ Authorization: Bearer nope_live_xxxxxx
 Key types:
 - \`nope_live_*\` - Production keys
 - \`nope_test_*\` - Test keys (rate limited)
-
-**Exception:** \`/v1/try\` is a free trial endpoint that requires no API key (see below).
-
----
-
-## POST /v1/try
-
-**Free trial endpoint.** Try the API without an API key. Same functionality as \`/v1/evaluate\` but with limitations:
-
-**Limitations:**
-- **Rate limit:** 5 requests per hour per IP address
-- **Message truncation:** Only last 10 messages kept (most recent), individual messages capped at ~500 tokens
-- **No safe response generation:** Only template-based responses (no LLM-generated replies)
-- **No debug info:** Debug information not included in responses
-
-**Authentication:** None required (no Bearer token)
-
-**Request/Response:** Same format as \`/v1/evaluate\` (see below)
-
-**Use case:** Ideal for testing the API, demos, or low-volume integrations. For production use, [create an API key](https://dashboard.nope.net) to get full features and higher limits.
 
 ---
 
