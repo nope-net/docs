@@ -23,7 +23,33 @@ export async function load() {
     toc.push({ id, title, level });
   }
 
-  // Configure marked with syntax highlighting
+  // Parse markdown tokens
+  const tokens = marked.lexer(markdown);
+
+  // Pre-process code blocks with syntax highlighting
+  const processTokens = async (tokens: any[]): Promise<void> => {
+    for (const token of tokens) {
+      if (token.type === 'code' && token.lang) {
+        try {
+          token.highlighted = await codeToHtml(token.text, {
+            lang: token.lang,
+            theme: 'github-light'
+          });
+        } catch (e) {
+          // Keep original if highlighting fails
+          token.highlighted = null;
+        }
+      }
+      // Recursively process nested tokens
+      if (token.tokens) {
+        await processTokens(token.tokens);
+      }
+    }
+  };
+
+  await processTokens(tokens);
+
+  // Configure renderer to use pre-highlighted code
   const renderer = new marked.Renderer();
 
   renderer.heading = ({ text, depth }) => {
@@ -34,26 +60,32 @@ export async function load() {
     return `<h${depth} id="${id}">${text}</h${depth}>`;
   };
 
-  renderer.code = async ({ text, lang }) => {
-    if (lang && lang !== 'text') {
-      try {
-        const highlighted = await codeToHtml(text, {
-          lang,
-          theme: 'github-light'
-        });
-        return highlighted;
-      } catch (e) {
-        // Fallback to plain code block if language not supported
-        return `<pre><code class="language-${lang}">${text}</code></pre>`;
-      }
+  renderer.code = ({ text, lang, escaped }: any) => {
+    // Use pre-highlighted version if available
+    const token = tokens.find((t: any) => t.type === 'code' && t.text === text);
+    if (token?.highlighted) {
+      return token.highlighted;
     }
-    return `<pre><code>${text}</code></pre>`;
+    // Fallback
+    if (lang) {
+      return `<pre><code class="language-${lang}">${escaped ? text : escape(text)}</code></pre>`;
+    }
+    return `<pre><code>${escaped ? text : escape(text)}</code></pre>`;
   };
 
   marked.setOptions({ renderer });
 
-  // Render markdown with syntax highlighting
-  const html = await marked(markdown);
+  // Render with pre-processed tokens
+  const html = marked.parser(tokens);
 
   return { html, toc };
+}
+
+function escape(html: string): string {
+  return html
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
