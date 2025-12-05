@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite dev --port 5176",
-    "build": "vite build",
+    "generate": "tsx scripts/generate-docs.ts",
+    "dev": "pnpm generate && vite dev --port 5176",
+    "build": "pnpm generate && vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
     "@sveltejs/adapter-netlify": "^5.0.0",
+    "tsx": "^4.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "svelte": "^5.0.0",
