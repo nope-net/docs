@@ -8,7 +8,7 @@
  * Output: src/lib/reference.generated.md (gitignored)
  */
 
-import { writeFileSync } from 'fs';
+import { writeFileSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -504,6 +504,9 @@ console.log(result.global.overall_severity);
 function main() {
   console.log('Generating API reference markdown...');
   const markdown = generateMarkdown();
+
+  // Ensure directory exists
+  mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
 
   writeFileSync(OUTPUT_PATH, markdown, 'utf-8');
   console.log(`Written to ${OUTPUT_PATH}`);
