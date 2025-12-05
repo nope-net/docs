@@ -62,7 +62,7 @@ export async function load() {
 
   renderer.code = ({ text, lang, escaped }: any) => {
     // Use pre-highlighted version if available
-    const token = tokens.find((t: any) => t.type === 'code' && t.text === text);
+    const token = tokens.find((t: any) => t.type === 'code' && t.text === text) as { highlighted?: string } | undefined;
     if (token?.highlighted) {
       return token.highlighted;
     }
