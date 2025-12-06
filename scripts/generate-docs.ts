@@ -394,7 +394,8 @@ Key types:
     conversation_id?: string,        // Your ID for webhooks
     end_user_id?: string,            // Your user ID for webhooks
   },
-  user_context?: string  // Additional context (e.g., app persona)
+  user_context?: string,             // Additional context (e.g., app persona)
+  proposed_response?: string         // AI response to validate for appropriateness
 }
 \`\`\`
 
@@ -416,6 +417,12 @@ Key types:
   recommended_reply?: {
     content: string,
     source: 'template'|'llm_generated',
+  },
+  proposed_response_evaluation?: {
+    appropriate: boolean,
+    issues: string[],
+    recommendation: 'use'|'augment'|'replace',
+    reasoning?: string,
   },
   coping_recommendations?: Array<{
     category: 'self_soothing'|'social_support'|'professional_support'|'safety_planning'|'means_safety',
@@ -573,6 +580,128 @@ Key types:
   victimisation_subtype?: 'IPV_intimate_partner'|'family_non_intimate'|'trafficking_exploitation'|'community_violence'|'institutional_abuse'|'other',
 }
 \`\`\`
+
+---
+
+## Response Validation with \`proposed_response\`
+
+NOPE can evaluate AI-generated responses before they reach users, checking for appropriateness given the conversation context and risk level. This "safety check" workflow helps prevent harmful responses.
+
+### Use Case
+
+Instead of sending your LLM's response directly to the user:
+
+\`\`\`
+User message → Your LLM → User
+\`\`\`
+
+Validate it first through NOPE:
+
+\`\`\`
+User message → Your LLM → NOPE validation → Send if safe, else use recommended_reply
+\`\`\`
+
+### Request with \`proposed_response\`
+
+Add the \`proposed_response\` field to your \`/v1/evaluate\` request:
+
+\`\`\`typescript
+{
+  messages: [
+    {role: "user", content: "I can't take this anymore"},
+    {role: "assistant", content: "Your feelings are valid..."}
+  ],
+  proposed_response: "Have you tried meditation?",  // ← Your AI's draft response
+  config: {user_country: "US"}
+}
+\`\`\`
+
+### Response with \`proposed_response_evaluation\`
+
+NOPE returns an additional field evaluating your proposed response:
+
+\`\`\`typescript
+{
+  // ... normal classification fields ...
+
+  proposed_response_evaluation: {
+    appropriate: false,
+    issues: ['crisis_signal_ignored', 'crisis_resources_missing'],
+    recommendation: 'replace',  // 'use' | 'augment' | 'replace'
+    reasoning: "The proposed response fails to acknowledge the crisis and does not provide any crisis resources"
+  },
+
+  recommended_reply: {
+    content: "[Safe template response]",
+    source: 'template'
+  }
+}
+\`\`\`
+
+### Response Issue Taxonomy
+
+**CRITICAL** (recommend: replace) - May directly increase harm:
+- \`method_or_means_detail\`: Provides specific suicide/self-harm method information
+- \`suicide_self_harm_encouragement\`: Validates suicide as reasonable
+- \`crisis_signal_ignored\`: Continues normally despite clear crisis
+- \`crisis_resources_missing\`: High-risk situation with no crisis resources provided
+- \`victim_blaming\`: Implies user is responsible for abuse
+- \`harmful_advice\`: Advice that worsens condition
+
+**SERIOUS** (recommend: replace or augment) - Undermines trust/recovery:
+- \`dismissive_of_distress\`: Minimizes user's pain
+- \`disbelief_of_disclosure\`: Questions veracity
+- \`inappropriate_probing\`: Intrusive questions
+- \`reinforces_harmful_beliefs\`: Agrees with delusions/distortions
+
+**CONCERNING** (recommend: augment or use) - Reduces helpfulness:
+- \`scripted_robotic_tone\`: Generic, lacks warmth
+- \`overwhelming_or_unfocused\`: Too many steps, disorganized
+
+### Recommendation Actions
+
+| Recommendation | Meaning | Action |
+|----------------|---------|--------|
+| \`use\` | Response is appropriate | Send to user as-is |
+| \`augment\` | Response is OK but could be better | Add crisis resources or empathy |
+| \`replace\` | Response is harmful or inappropriate | Use \`recommended_reply\` instead |
+
+### Example Implementation
+
+\`\`\`python
+from nope import NopeClient
+
+client = NopeClient(api_key="nope_live_...")
+
+# Generate response with your LLM
+your_response = your_llm.generate(conversation)
+
+# Validate it through NOPE
+result = client.evaluate(
+    messages=conversation,
+    proposed_response=your_response,
+    config={"user_country": "US"}
+)
+
+# Use NOPE's recommendation
+if result.proposed_response_evaluation.recommendation == 'use':
+    send_to_user(your_response)
+elif result.proposed_response_evaluation.recommendation == 'augment':
+    # Add crisis resources to your response
+    augmented = your_response + "\\n\\n" + format_resources(result.crisis_resources)
+    send_to_user(augmented)
+else:  # replace
+    # Use NOPE's safe response instead
+    send_to_user(result.recommended_reply.content)
+\`\`\`
+
+### Cost & Performance
+
+- **Filter stage**: ~$0.0001 (minimal overhead)
+- **Classification stage**: ~$0.01 (only runs if needed)
+- **Latency**: <200ms additional (runs in parallel with risk classification)
+
+If conversation has no concerns AND response passes filter, returns immediately without classification (~100ms total).
 
 ---
 

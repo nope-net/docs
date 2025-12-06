@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@variant dark (.dark &);
 
 /* Prose customizations for documentation */
 .prose {
@@ -7,6 +8,20 @@
 	--tw-prose-links: #0d9488;
 	--tw-prose-code: #111827;
 	max-width: none;
+	color: #374151;
+}
+
+/* Dark mode prose customizations */
+.dark .prose {
+	--tw-prose-body: #d1d5db;
+	--tw-prose-headings: #f9fafb;
+	--tw-prose-links: #5eead4;
+	--tw-prose-code: #f9fafb;
+	color: #d1d5db;
+}
+
+.prose p {
+	color: var(--tw-prose-body);
 }
 
 .prose h1 {
@@ -15,6 +30,11 @@
 	margin-bottom: 1.5rem;
 	padding-bottom: 1rem;
 	border-bottom: 1px solid #e5e7eb;
+	color: var(--tw-prose-headings);
+}
+
+.dark .prose h1 {
+	border-bottom-color: #374151;
 }
 
 .prose h2 {
@@ -24,6 +44,11 @@
 	margin-bottom: 1rem;
 	padding-bottom: 0.5rem;
 	border-bottom: 1px solid #f3f4f6;
+	color: var(--tw-prose-headings);
+}
+
+.dark .prose h2 {
+	border-bottom-color: #1f2937;
 }
 
 .prose h3 {
@@ -31,6 +56,7 @@
 	font-weight: 600;
 	margin-top: 2rem;
 	margin-bottom: 0.75rem;
+	color: var(--tw-prose-headings);
 }
 
 .prose h4 {
@@ -38,6 +64,7 @@
 	font-weight: 600;
 	margin-top: 1.5rem;
 	margin-bottom: 0.5rem;
+	color: var(--tw-prose-headings);
 }
 
 .prose pre {
@@ -50,11 +77,39 @@
 	line-height: 1.6;
 }
 
-/* Shiki-rendered code blocks */
+.dark .prose pre {
+	background: #1f2937;
+	border-color: #374151;
+}
+
+/* Shiki-rendered code blocks with dual theme support */
 .prose pre.shiki {
-	background: #ffffff !important;
 	border: 1px solid #e5e7eb;
 	padding: 1.25rem;
+}
+
+.dark .prose pre.shiki {
+	border-color: #374151;
+}
+
+/* Show light theme by default, hide dark theme */
+.prose pre.shiki span {
+	color: var(--shiki-light);
+	background-color: var(--shiki-light-bg);
+}
+
+.prose pre.shiki {
+	background-color: var(--shiki-light-bg);
+}
+
+/* In dark mode, show dark theme, hide light theme */
+.dark .prose pre.shiki span {
+	color: var(--shiki-dark);
+	background-color: var(--shiki-dark-bg);
+}
+
+.dark .prose pre.shiki {
+	background-color: var(--shiki-dark-bg);
 }
 
 .prose code {
@@ -66,11 +121,29 @@
 	font-weight: 500;
 }
 
+.dark .prose code {
+	background: #374151;
+	color: #e5e7eb;
+}
+
 .prose pre code {
-	background: transparent;
+	background: transparent !important;
 	padding: 0;
-	color: inherit;
+	color: inherit !important;
 	font-weight: 400;
+}
+
+/* Ensure Shiki token colors are applied */
+.prose pre.shiki code {
+	color: inherit !important;
+}
+
+.prose pre.shiki code span {
+	color: var(--shiki-light) !important;
+}
+
+.dark .prose pre.shiki code span {
+	color: var(--shiki-dark) !important;
 }
 
 /* Enhanced table styling */
@@ -96,10 +169,20 @@
 	letter-spacing: 0.025em;
 }
 
+.dark .prose th {
+	background: linear-gradient(to bottom, #1f2937, #111827);
+	border-color: #374151;
+	color: #d1d5db;
+}
+
 .prose td {
 	border: 1px solid #e5e7eb;
 	padding: 0.875rem 1rem;
 	transition: background-color 0.15s;
+}
+
+.dark .prose td {
+	border-color: #374151;
 }
 
 /* Zebra striping for better readability */
@@ -107,8 +190,16 @@
 	background: #f9fafb;
 }
 
+.dark .prose tbody tr:nth-child(even) {
+	background: #1f2937;
+}
+
 .prose tbody tr:hover {
 	background: #f0fdfa;
+}
+
+.dark .prose tbody tr:hover {
+	background: #0f2d28;
 }
 
 .prose blockquote {
@@ -116,6 +207,11 @@
 	background: #f0fdfa;
 	padding: 1rem;
 	margin: 1.5rem 0;
+}
+
+.dark .prose blockquote {
+	border-left-color: #5eead4;
+	background: #0f2d28;
 }
 
 /* Sidebar navigation */
@@ -128,15 +224,29 @@
 	transition: all 0.15s;
 }
 
+.dark .nav-item {
+	color: #9ca3af;
+}
+
 .nav-item:hover {
 	background: #f3f4f6;
 	color: #111827;
+}
+
+.dark .nav-item:hover {
+	background: #1f2937;
+	color: #f9fafb;
 }
 
 .nav-item.active {
 	background: #f0fdfa;
 	color: #0d9488;
 	font-weight: 500;
+}
+
+.dark .nav-item.active {
+	background: #0f2d28;
+	color: #5eead4;
 }
 
 .nav-section {
@@ -147,6 +257,10 @@
 	color: #9ca3af;
 	padding: 0.5rem 0.75rem;
 	margin-top: 1.5rem;
+}
+
+.dark .nav-section {
+	color: #6b7280;
 }
 
 .nav-section:first-child {
@@ -162,6 +276,11 @@
 	margin: 1.5rem 0;
 }
 
+.dark .prose > p:has(> strong:first-child) {
+	border-left-color: #5eead4;
+	background: #0f2d28;
+}
+
 /* Severity and domain badges in tables */
 .prose td code {
 	white-space: nowrap;
@@ -172,6 +291,7 @@
 	text-decoration: none;
 	font-weight: 500;
 	transition: color 0.15s;
+	color: var(--tw-prose-links);
 }
 
 .prose a:hover {
@@ -179,19 +299,50 @@
 	text-decoration: underline;
 }
 
-/* Better spacing for lists */
+.dark .prose a:hover {
+	color: #2dd4bf;
+}
+
+/* Other prose text elements */
+.prose strong {
+	color: var(--tw-prose-headings);
+}
+
 .prose ul, .prose ol {
+	color: var(--tw-prose-body);
 	margin: 1rem 0;
 }
 
 .prose li {
+	color: var(--tw-prose-body);
 	margin: 0.5rem 0;
+}
+
+/* Table text colors */
+.prose table {
+	color: var(--tw-prose-body);
+}
+
+.prose th {
+	color: #374151;
+}
+
+.dark .prose th {
+	color: #d1d5db;
+}
+
+.prose td {
+	color: var(--tw-prose-body);
 }
 
 /* Section dividers */
 .prose hr {
 	margin: 3rem 0;
 	border-color: #e5e7eb;
+}
+
+.dark .prose hr {
+	border-color: #374151;
 }
 
 /* Smooth scroll behavior */

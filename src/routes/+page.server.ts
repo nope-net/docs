@@ -33,7 +33,11 @@ export async function load() {
         try {
           token.highlighted = await codeToHtml(token.text, {
             lang: token.lang,
-            theme: 'github-light'
+            themes: {
+              light: 'github-light',
+              dark: 'github-dark'
+            },
+            defaultColor: false
           });
         } catch (e) {
           // Keep original if highlighting fails
